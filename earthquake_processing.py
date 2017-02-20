@@ -5,6 +5,7 @@ latC = 66.9036
 r = 100
 angle = 0
 points = []
+mags = []
 
 def setup():
     size(500,500,P3D)
@@ -17,10 +18,13 @@ def setup():
     for row in table.rows():
         lat = row.getFloat("latitude")
         lon = row.getFloat("longitude") 
+        mag = row.getFloat("mag")
+        
         #print lon,lat
         pt = Coor2Pt(lon, lat)
         #print pt
         points.append(pt)
+        mags.append(mag)
     
 def draw():
     global angle
@@ -32,15 +36,17 @@ def draw():
     rotateY(angle)
     noStroke()
     fill(255,0,0)
-    sphere(r)
+    sphereDetail(25)
+    sphere(r+2)
     angle += 0.05
     
     
-    for pt in points:
+    for i,pt in enumerate(points):
         pushMatrix()
         translate(pt[0],pt[1],pt[2])
-        fill(0,0,255)
-        box(5)
+        fill(255,255,255)
+        sphereDetail(5)
+        sphere(mags[i])
         popMatrix()
 
 def Coor2Pt(lon,lat):
