@@ -88,13 +88,13 @@ def draw():
         endShape()
 
     angle += vel
-
+    """
     print frameCount
     print degrees(angle)
     if degrees(angle) < 360:
         saveFrame("earth{}.png".format(frameCount))
     else: pass
-    
+    """
 def Coor2Pt(lon, lat):
     theta = radians(lat) + PI / 2
     phi = radians(lon) + PI
