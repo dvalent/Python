@@ -1,41 +1,35 @@
-flighttable = loadStrings(
-    "https://raw.githubusercontent.com/jpatokal/openflights/master/data/routes.dat")
-#table = loadTable("http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.csv", "header")
-Airports = loadStrings(
-    "https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat")
+add_library('peasycam')
 
+nflights = 5000
 angle = 0
 r = 150
 vel = 0.02
+
 points = []
 mags = []
 coor = []
 myDic = {}
 flightPts = []
+newMid = []
 
 def setup():
-    
+    flighttable = loadStrings("https://raw.githubusercontent.com/jpatokal/openflights/master/data/routes.dat")
+    Airports = loadStrings("https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat")
     size(500, 500, P3D)
+    cam = PeasyCam(this, 500)
+    cam.lookAt(height * 0.5, width * 0.5,0)
+    cam.setActive(True)
+    cam.setMinimumDistance(300)
+    cam.setMaximumDistance(800)
     smooth()
-    """
-    for row in table.rows():
-        lat = row.getFloat("latitude")
-        lon = row.getFloat("longitude")
-        mag = row.getFloat("mag")
-
-        # print lon,lat
-        pt = Coor2Pt(lon, lat)
-        # print pt
-        points.append(pt)
-        mags.append(mag)
-    """        
+          
     for i, line in enumerate(Airports):
         nl = line.split(',')
         IATA, lon , lat  = nl[4].strip('"'), nl[6], nl[7]
         myDic[IATA] = (lon , lat)
         #print(str(i) + " code is {} lon is {}".format(IATA, lon))
         
-    for i, line in enumerate(flighttable):
+    for i, line in enumerate(flighttable[:nflights]):
         nls = split(line, ',')
         dep = nls[2]
         arr = nls[4]
@@ -49,57 +43,57 @@ def setup():
         arrPt = Coor2Pt(float(arrCo[0]),float(arrCo[1]))
         flightPts.append([depPt,arrPt])
         
-
+        d = dist(depPt[0],depPt[1],depPt[2],arrPt[0],arrPt[1],arrPt[2])
+        d = map(d,0,100,10,50)
+        
+        midpt = ((depPt[0]+arrPt[0])/2,(depPt[1]+arrPt[1])/2,(depPt[2]+arrPt[2])/2)
+        
+        vectorMid = PVector(midpt[0], midpt[1],midpt[2])
+        vectorMid.normalize()
+        vectorMid.mult(r+d)
+        
+        newMid.append(vectorMid)
+        
 def draw():
     global angle
     global table
+
+    #frameRate(1)
     background(51)
 
     translate(height * 0.5, width * 0.5)
     lights()
     rotateY(angle)
     #noStroke()
-    #fill(255, 0, 0)
-    noFill()
+    fill(25)
+    #noFill()
     strokeWeight(1)
     stroke(0,0,0)
 
     sphereDetail(25)
-    sphere(r + 2)
-    angle += vel
+    sphere(r)
+    noFill()
     
-    """
-    for i, pt in enumerate(points[:100]):
-        pushMatrix()
-        translate(pt[0], pt[1], pt[2])
-        fill(255, 255, 255)
-        sphereDetail(5)
-        sphere(mags[i])
-        popMatrix()
-    """
     
-    for i, pt in enumerate(flightPts[:250]):
+    for i, pt in enumerate(flightPts):
         
         x1,y1,z1 = pt[0][0],pt[0][1],pt[0][2]
         x2,y2,z2 = pt[1][0],pt[1][1],pt[1][2]
-        
-        strokeWeight(5)
-        stroke(255,0,0,50)
-        point(x1, y1, z1)
-        stroke(0,0,255,50)
-        point(x2, y2, z2)
-        
-        flightArc(pt[0],pt[1])
-        
-        """
-        pushMatrix()
-        translate(x1,y1,z1)
-        fill(255, 255, 255)
-        box(5)
-        popMatrix()
-        #line(x1,y1,z1,x2,y2,z2)
-        """
-    
+
+        strokeWeight(1)
+        stroke(255,255,0,30)
+        beginShape()
+        vertex(pt[0][0],pt[0][1],pt[0][2])
+        quadraticVertex(newMid[i].x,newMid[i].y,newMid[i].z,pt[1][0],pt[1][1],pt[1][2])
+        endShape()
+
+    angle += vel
+
+    print frameCount
+    print degrees(angle)
+    if degrees(angle) < 360:
+        saveFrame("earth{}.png".format(frameCount))
+    else: pass
     
 def Coor2Pt(lon, lat):
     theta = radians(lat) + PI / 2
@@ -110,33 +104,3 @@ def Coor2Pt(lon, lat):
     z = r * cos(theta)
 
     return (x, y, z)
-
-def flightArc(pt1,pt2):
-    
-    d = dist(pt1[0],pt1[1],pt1[2],pt2[0],pt2[1],pt2[2])
-    d = map(d,0,100,10,50)
-    
-    midpt = ((pt1[0]+pt2[0])/2,(pt1[1]+pt2[1])/2,(pt1[2]+pt2[2])/2)
-    
-    vectorMid = PVector(midpt[0], midpt[1],midpt[2])
-    vectorMid.normalize()
-    vectorMid.mult(r+d)
-    """
-    strokeWeight(1)
-    stroke(0,255,0)
-    point(midpt[0], midpt[1],midpt[2])
-    strokeWeight(3)
-    stroke(255,255,0)
-    point(vectorMid.x, vectorMid.y,vectorMid.z)
-    """
-    strokeWeight(1)
-    stroke(255,255,0)
-    beginShape()
-    vertex(pt1[0],pt1[1],pt1[2])
-    #quadraticVertex(vectorMid.x, vectorMid.y,vectorMid.z)
-    quadraticVertex(vectorMid.x,vectorMid.y,vectorMid.z,pt2[0],pt2[1],pt2[2])
-    endShape()
-    
-
-
-        
