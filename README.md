@@ -1,2 +1,2 @@
 # Python
-python Snippets
+a Collection of python Snippets
