@@ -33,16 +33,17 @@ def main():
 def display():
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-
+    glutDisplayFunc( )
     #glPushMatrix()
     color = [0.1,0.5,0.5]
     glMaterialfv(GL_FRONT,GL_DIFFUSE,color)
     glRotatef(1, 3, 1, 1)
-    glutWireSphere(2,50,50)
+    # glutWireSphere(2,50,50)
+    # glutSolidSphere(2,50,50)
+    glutSolidTorus(1,3,50,50)
     #glPopMatrix()
 
     glutSwapBuffers()
     return
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__": main()
