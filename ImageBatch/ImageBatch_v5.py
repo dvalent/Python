@@ -13,7 +13,7 @@ key='AIzaSyDAw6syBJ_LLYa0EyidcNBGeqbAeZjhn-k'
 gmaps = googlemaps.Client(key=key)
 
 # Geocoding an address
-geocode_result = gmaps.geocode('Via Mascheroni,25')
+geocode_result = gmaps.geocode('ravenswood 3, hassocks')
 
 
 def latlontopixels(lat, lon, zoom):
