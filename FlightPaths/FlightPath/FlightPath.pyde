@@ -1,6 +1,6 @@
 add_library('peasycam')
 
-nflights = 5000
+nflights = 50000
 angle = 0
 r = 150
 vel = 0.02
@@ -16,8 +16,8 @@ def setup():
     flighttable = loadStrings("https://raw.githubusercontent.com/jpatokal/openflights/master/data/routes.dat")
     Airports = loadStrings("https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat")
     size(500, 500, P3D)
-    cam = PeasyCam(this, 500)
-    cam.lookAt(height * 0.5, width * 0.5,0)
+    cam = PeasyCam(this,height * 0.5, width * 0.5,0, 500)
+    #cam.lookAt(height * 0.5, width * 0.5,0)
     cam.setActive(True)
     cam.setMinimumDistance(300)
     cam.setMaximumDistance(800)
@@ -77,9 +77,8 @@ def draw():
     
     for i, pt in enumerate(flightPts):
         
-        x1,y1,z1 = pt[0][0],pt[0][1],pt[0][2]
-        x2,y2,z2 = pt[1][0],pt[1][1],pt[1][2]
-
+        
+        #Draw paths:
         strokeWeight(1)
         stroke(255,255,0,30)
         beginShape()

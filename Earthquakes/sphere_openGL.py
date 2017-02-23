@@ -110,7 +110,7 @@ class Sphere:
         self.draw()
 
         glutSwapBuffers()
-        
+
     # Draw the sphere
     def draw(self):
 
@@ -185,7 +185,6 @@ class Sphere:
         else:
             glutIdleFunc(None)
 
-
 # The main function
 def main():
 
@@ -206,7 +205,7 @@ def main():
     s = Sphere(1.0,3)
 
     s.init()
-
+    
     # Set the callback function for display
     glutDisplayFunc(s.display)
 
