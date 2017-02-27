@@ -24,7 +24,6 @@ def setup():
     Airports = loadStrings("https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat")
     size(500, 500, P3D)
 
-    map(nflights, 0
 
     noStroke()
     globe = createShape(SPHERE, r)
@@ -98,7 +97,7 @@ def draw():
         quadraticVertex(newMid[i].x,newMid[i].y,newMid[i].z,pt[1][0],pt[1][1],pt[1][2])
         endShape()
 
-    #angle += vel
+    angle += vel
 
     """
     print frameCount
