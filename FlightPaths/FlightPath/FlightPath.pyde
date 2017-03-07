@@ -1,6 +1,6 @@
 add_library('peasycam')
 
-nflights = 50000
+nflights =20000
 angle = 0
 r = 150
 vel = 0.02
@@ -12,10 +12,23 @@ myDic = {}
 flightPts = []
 newMid = []
 
+earth = PImage()
+globe = PShape()
+
 def setup():
+    global earth
+    global globe
+
+    earth = loadImage("earth.jpg")
     flighttable = loadStrings("https://raw.githubusercontent.com/jpatokal/openflights/master/data/routes.dat")
     Airports = loadStrings("https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat")
     size(500, 500, P3D)
+
+
+    noStroke()
+    globe = createShape(SPHERE, r)
+    globe.setTexture(earth)
+
     cam = PeasyCam(this,height * 0.5, width * 0.5,0, 500)
     #cam.lookAt(height * 0.5, width * 0.5,0)
     cam.setActive(True)
@@ -23,6 +36,10 @@ def setup():
     cam.setMaximumDistance(800)
     smooth()
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
     for i, line in enumerate(Airports):
         nl = line.split(',')
         IATA, lon , lat  = nl[4].strip('"'), nl[6], nl[7]
@@ -54,16 +71,21 @@ def setup():
 
         newMid.append(vectorMid)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
 def draw():
     global angle
     global table
+    global earth
+    global globe
 
-    #frameRate(1)
     background(51)
-
     translate(height * 0.5, width * 0.5)
-    lights()
+
     rotateY(angle)
+<<<<<<< HEAD
     #noStroke()
     fill(25)
     #noFill()
@@ -73,20 +95,32 @@ def draw():
     sphereDetail(25)
     sphere(r)
     noFill()
+=======
+    lights()
+
+
+    noStroke()
+    sh = shape(globe)
+>>>>>>> origin/master
 
 
     for i, pt in enumerate(flightPts):
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
         #Draw paths:
         strokeWeight(1)
-        stroke(255,255,0,30)
+        noFill()
+        stroke(255,60,0,30)
         beginShape()
         vertex(pt[0][0],pt[0][1],pt[0][2])
         quadraticVertex(newMid[i].x,newMid[i].y,newMid[i].z,pt[1][0],pt[1][1],pt[1][2])
         endShape()
 
     angle += vel
+
     """
     print frameCount
     print degrees(angle)
@@ -94,12 +128,17 @@ def draw():
         saveFrame("earth{}.png".format(frameCount))
     else: pass
     """
-def Coor2Pt(lon, lat):
-    theta = radians(lat) + PI / 2
-    phi = radians(lon) + PI
 
-    x = r * sin(theta) * cos(phi)
-    y = r * sin(theta) * sin(phi)
-    z = r * cos(theta)
+def Coor2Pt(lat, lon):
+    lat = radians(lat) - PI/2
+    lon = radians(lon) - PI
 
+    x = r * sin(lat) * cos(lon)
+    y = r * sin(lat) * sin(lon)
+    z = r * cos(lat)
+
+<<<<<<< HEAD
     return (x, y, z)
+=======
+    return (-x, -z, y)
+>>>>>>> origin/master
