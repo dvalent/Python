@@ -1,3 +1,4 @@
+
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,13 +13,15 @@ def createExample():
     for eachNum in numbersHave:
         for eachVer in VersionsHave:
             imgFilePath = 'images/numbers/'+str(eachNum)+'.'+str(eachVer)+'.png'
-            ei = Image.open(imgFilePath, mode="r")
+            ei = Image.open(imgFilePath)
             eiar = np.array(ei)
             eiar1 = str(eiar.tolist())
 
             lineToWrite = str(eachNum)+'::'+eiar1+'\n'
 
             numberArrayExamples.write(lineToWrite)
+
+
 
 
 """
@@ -62,30 +65,46 @@ def whatNumIsThis(filepath):
     inQuestion = str(iarl)
 
     for eachExample in loadExamples:
-        splitEx = eachExample.split('::')
-        #print splitEx
-        #print 'len is' + str(len(splitEx[0]))
+        if len(eachExample) > 3:
+            splitEx = eachExample.split('::')
 
-        currentNum = splitEx[0]
-        try:
+            currentNum = splitEx[0]
             currentAr = splitEx[1]
-        except:
-            print('error')
 
-        eachPixEx = currentAr.split('],')
+            eachPixEx = currentAr.split('],')
 
-        eachPixInQ = inQuestion.split('],')
+            eachPixInQ = inQuestion.split('],')
 
-        x = 0
-        while x < len(eachPixEx):
-            if eachPixEx[x] == eachPixInQ[x]:
-                matchedAr.append(int(currentNum))
+            x = 0
 
-            x += 1
+            while x < len(eachPixEx):
+                if eachPixEx[x] == eachPixInQ[x]:
+                    matchedAr.append(int(currentNum))
+
+                x += 1
 
     print matchedAr
     x = Counter(matchedAr)
     print x
 
+    graphX =[]
+    graphY =[]
+
+    for eachThing in x:
+        print eachThing
+        graphX.append(eachThing)
+        graphY.append(x[eachThing])
+
+    fig = plt.figure()
+    ax1 = plt.subplot2grid((4,4),(0,0), rowspan=1, colspan=4)
+    ax2 = plt.subplot2grid((4,4),(1,0), rowspan=3, colspan=4)
+
+    ax1.imshow(iar)
+    ax2.bar(graphX,graphY, align = 'center')
+
+    plt.ylim(400)
+    plt.show()
+
+
 #createExample()
-whatNumIsThis('images/test.png')
+whatNumIsThis('images/1.6.png')
