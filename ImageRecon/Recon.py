@@ -107,4 +107,4 @@ def whatNumIsThis(filepath):
 
 
 #createExample()
-whatNumIsThis('images/1.6.png')
+whatNumIsThis('images/TEST4.png')

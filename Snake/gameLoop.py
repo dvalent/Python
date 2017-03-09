@@ -21,7 +21,7 @@ clock = pygame.time.Clock()
 
 blockSize = 10
 
-FPS = 50
+FPS = 10
 
 font = pygame.font.SysFont(None, 25)
 
@@ -130,7 +130,7 @@ def gameLoop():
         for eachSegment in snakeList[:-1]:
             if eachSegment == snakeHead:
                 gameOver = True
-
+  
 
         snake(blockSize, snakeList)
 
