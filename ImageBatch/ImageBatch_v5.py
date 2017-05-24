@@ -13,7 +13,7 @@ key='AIzaSyDAw6syBJ_LLYa0EyidcNBGeqbAeZjhn-k'
 gmaps = googlemaps.Client(key=key)
 
 # Geocoding an address
-geocode_result = gmaps.geocode('ravenswood 3, hassocks')
+geocode_result = gmaps.geocode('edinburgh, airport')
 
 
 def latlontopixels(lat, lon, zoom):
@@ -37,23 +37,25 @@ def pixelstolatlon(px, py, zoom):
 ############################################
 
 
-ullat = geocode_result[0]['geometry']['viewport']['northeast']['lat']
-ulllng = geocode_result[0]['geometry']['viewport']['northeast']['lng']
-brlat = geocode_result[0]['geometry']['viewport']['southwest']['lat']
-brllng = geocode_result[0]['geometry']['viewport']['southwest']['lng']
+# ullat = geocode_result[0]['geometry']['viewport']['northeast']['lat']
+# ulllng = geocode_result[0]['geometry']['viewport']['northeast']['lng']
+# brlat = geocode_result[0]['geometry']['viewport']['southwest']['lat']
+# brllng = geocode_result[0]['geometry']['viewport']['southwest']['lng']
+#
+# upperleft = str(ullat)+','+str(brllng) #'8.622135, -70.222482'#'-29.44,-52.0'
+# lowerright = str(brlat)+','+str(ulllng)#'8.617694, -70.216141'#'-29.45,-51.98'
 
-upperleft = str(ullat)+','+str(brllng) #'8.622135, -70.222482'#'-29.44,-52.0'
-lowerright = str(brlat)+','+str(ulllng)#'8.617694, -70.216141'#'-29.45,-51.98'
 
-# a neighbourhood in Lajeado, Brazil:
 #upperleft =  '-29.44,-52.0'
 #lowerright = '-29.45,-51.98'
 
+upperleft = '55.945097, -3.380004'
+lowerright = '55.941330, -3.370404'
 
 print 'UPPERLEFT IS {}'.format(upperleft)
 print 'LOWERRIGHT IS {}'.format(lowerright)
 
-zoom = 20   # be careful not to get too many images!
+zoom = 22   # be careful not to get too many images!
 
 ############################################
 
@@ -103,3 +105,5 @@ for x in range(cols):
         im=Image.open(StringIO.StringIO(f.read()))
         final.paste(im, (int(x*largura), int(y*altura)))
 final.show()
+
+#final.save('c:/')

@@ -12,7 +12,9 @@ width = 320+blockSize
 grey =(50,50,50)
 print (height//blockSize)
 snakeList = []
+VecsnakeList = []
 snakeLength = 1
+path2follow = []
 
 randApplex = random.randrange(0, width - blockSize, blockSize)
 randAppley = random.randrange(0, height - blockSize, blockSize)
@@ -39,7 +41,7 @@ class squareGrid:
         self.connections = [vec(1,0), vec(-1,0), vec(0,1), vec(0,-1)]
 
     def inbounds(self, node):
-        return 0<= node.x < self.width and 0 <= node.y < self.height
+        return 0 <= node.x < self.width and 0 <= node.y < self.height
 
     def passable(self, node):
         return node not in self.walls
@@ -70,7 +72,22 @@ def snake(snakeList):
         snakeB = pygame.draw.rect(display, (255, 255, 255), (pt[0], pt[1], blockSize, blockSize ))
     snakeH = pygame.draw.rect(display, (0, 255, 0), (snakehead[0], snakehead[1], blockSize, blockSize ))
 
-g = squareGrid(width//blockSize, height//blockSize)
+def applecheck(randApplex,randAppley,snakeList):
+
+    applePos = (randApplex,randAppley)
+    print 'ApplePos is ' + str(applePos) + '-' + str((applePos[0]//blockSize,applePos[1]//blockSize))
+
+    if applePos in snakeList:
+        print 'BAD APPLE'
+        newrandApplex = random.randrange(0, width - blockSize, blockSize)
+        newrandAppley = random.randrange(0, height - blockSize, blockSize)
+        applecheck(newrandApplex,newrandAppley,snakeList)
+
+    else:
+        print 'GOOD APPLE'
+        pygame.draw.rect(display, (255,0,0), [randApplex, randAppley, blockSize, blockSize]) #apple
+
+    return vec((randApplex//blockSize,randAppley//blockSize))
 
 def vec2int(v):
     return (int(v.x),int(v.y))
@@ -93,9 +110,28 @@ def breathfirst(graph,start):
 
 def shortPath(current,apple):
     if current != apple:
-        pygame.draw.circle(display, (255,0,255), [int(current.x*blockSize)+blockSize/2, int(current.y*blockSize)+blockSize/2], blockSize//5)
+        pygame.draw.circle(display, (255,0,255), [int(current.x*blockSize)+blockSize/2, int(current.y*blockSize)+blockSize/2], blockSize//7)
+        path2follow.append(current)
         current2 = current + path[vec2int(current)]
         shortPath(current2,apple)
+
+def follow(path2follow,posX,posY,apple):
+
+    if vec(posX//blockSize,posY//blockSize) != apple and len(path2follow) > 0:
+        print 'MOVING'
+
+        posX += posX_change
+        posY += posY_change
+
+        #posX = path2follow[0][0]*blockSize
+        #posY = path2follow[0][1]*blockSize
+
+        #vecHead = vec(posX//blockSize,posY//blockSize)
+        #del path2follow[0]
+        #follow(path2follow,vecHead,apple)
+    else: pass
+
+
 
 gameOn = True
 
@@ -130,40 +166,40 @@ while gameOn:
                     g.walls.append(mpos)
                 path = breathfirst(g,apple)
 
+    print VecsnakeList
+
+
     display.fill((0,0,0))
-    g.draw()
+    #g.draw()
+
     for row in range(blockSize,width,blockSize):
         for col in range(blockSize,height,blockSize):
             #line(0, row , width, row)
             #line(col, 0, col, height)
             cross(row, col, 3)
 
-    pygame.draw.rect(display, (255,0,0), [randApplex, randAppley, blockSize, blockSize]) #apple
 
 
-    posX += posX_change
-    posY += posY_change
 
-    if posX >= width-blockSize or posX <= 0 :
-        posX_change = 0
-    if posY >= height-blockSize or posY <= 0:
-        posY_change = 0
 
     snakeList.append((posX,posY))
+    VecsnakeList.append((posX//blockSize,posY//blockSize))
 
-    """
-    for node, dir in path.items():
-        if dir:
-            x,y = node
-            pygame.draw.rect(display, (20,20,20), [x*blockSize, y*blockSize, blockSize, blockSize])
-    """
     if len(snakeList) > snakeLength:
         del snakeList[0]
+    if len(VecsnakeList) > snakeLength:
+        del VecsnakeList[0]
+
+    apple = applecheck(randApplex,randAppley,snakeList[:-1])
+
+    g = squareGrid(width//blockSize, height//blockSize)
 
     if posX == randApplex and posY == randAppley:
         print('nom nom nom')
         randApplex = random.randrange(0, width - blockSize, blockSize)
         randAppley = random.randrange(0, height - blockSize, blockSize)
+        applecheck(randApplex,randAppley,snakeList[:-1])
+        path2follow = []
         snakeLength += 1
 
     snake(snakeList)
@@ -173,20 +209,47 @@ while gameOn:
             pygame.draw.rect(display, (0,255,255), [posX, posY, blockSize, blockSize])
             print ('self-intersect')
 
-    apple = vec(randApplex//blockSize,randAppley//blockSize)
+
     snakehead = snakeList[-1]
+    vecHead = vec(snakehead[0]//blockSize,snakehead[1]//blockSize)
+
+
+    print 'snkelist: ' + str(snakeList)
+    print 'head is '+ str(vecHead)
+    print 'apple is '+ str(apple)
 
     path = breathfirst(g,apple)
     #print path
 
-    vecHead = vec(snakehead[0]//blockSize,snakehead[1]//blockSize)
-
-    print 'head is '+ str(vecHead)
-    print 'apple is '+ str(apple)
-
     current =  vec2int(vecHead)  + path[vec2int(vecHead)]
 
     shortPath(current,apple)
+
+    if apple not in path2follow:
+        path2follow.append(apple)
+
+    #print path2follow[0]
+
+    #follow(path2follow,posX,posY,apple)
+
+    if vec(posX//blockSize,posY//blockSize) != apple and len(path2follow) > 0:
+
+        posX = path2follow[2][0]*blockSize
+        posY = path2follow[2][1]*blockSize
+        del path2follow[0]
+
+    else: pass
+
+    #print 'P2F is : '+ str(path2follow)
+
+    #posX += posX_change
+    #posY += posY_change
+
+    if posX >= width-blockSize or posX <= 0 :
+        posX_change = 0
+    if posY >= height-blockSize or posY <= 0:
+        posY_change = 0
+
 
     """
     while current != apple:
