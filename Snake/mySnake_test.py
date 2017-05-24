@@ -4,6 +4,7 @@ import random
 from collections import deque
 
 vec = pygame.math.Vector2
+
 pygame.init()
 
 blockSize = 20
@@ -91,11 +92,25 @@ def breathfirst(graph,start):
 
     return path
 
+<<<<<<< Updated upstream
 def shortPath(current,apple):
     if current != apple:
         pygame.draw.circle(display, (255,0,255), [int(current.x*blockSize)+blockSize/2, int(current.y*blockSize)+blockSize/2], blockSize//5)
         current2 = current + path[vec2int(current)]
         shortPath(current2,apple)
+=======
+def randomcheck(randApplex,randAppley,s):
+    if (randApplex,randAppley) in s:
+        print 'apple in snake!!!'
+        newrandApplex = random.randrange(0, width - blockSize, blockSize)
+        newrandAppley = random.randrange(0, height - blockSize, blockSize)
+        print newrandApplex
+        print newrandAppley
+
+        return randomcheck(newrandApplex,newrandAppley,s)
+
+    else: return [randApplex,randAppley]
+>>>>>>> Stashed changes
 
 gameOn = True
 
@@ -138,7 +153,7 @@ while gameOn:
             #line(col, 0, col, height)
             cross(row, col, 3)
 
-    pygame.draw.rect(display, (255,0,0), [randApplex, randAppley, blockSize, blockSize]) #apple
+
 
 
     posX += posX_change
@@ -150,7 +165,20 @@ while gameOn:
         posY_change = 0
 
     snakeList.append((posX,posY))
+    s = set(snakeList[:-1])
 
+
+
+
+
+    newapple = randomcheck(randApplex,randAppley,s)
+    randApplex = newapple[0]
+    randAppley = newapple[1]
+
+    print newapple
+
+
+    pygame.draw.rect(display, (255,0,0), [randApplex, randAppley, blockSize, blockSize]) #apple
     """
     for node, dir in path.items():
         if dir:
@@ -160,18 +188,23 @@ while gameOn:
     if len(snakeList) > snakeLength:
         del snakeList[0]
 
+    print 'lenght of snake is {}'.format(len(snakeList))
+
+    if len(snakeList) > 1:
+        for i in snakeList[:-1]:
+            k = vec(i)//blockSize
+            print k
+            g.walls.append(k)
+
+
     if posX == randApplex and posY == randAppley:
         print('nom nom nom')
         randApplex = random.randrange(0, width - blockSize, blockSize)
         randAppley = random.randrange(0, height - blockSize, blockSize)
         snakeLength += 1
 
-    snake(snakeList)
 
-    for bodypart in snakeList[:-1]:
-        if posX == bodypart[0] and posY == bodypart[1]:
-            pygame.draw.rect(display, (0,255,255), [posX, posY, blockSize, blockSize])
-            print ('self-intersect')
+
 
     apple = vec(randApplex//blockSize,randAppley//blockSize)
     snakehead = snakeList[-1]
@@ -184,6 +217,7 @@ while gameOn:
     print 'head is '+ str(vecHead)
     print 'apple is '+ str(apple)
 
+<<<<<<< Updated upstream
     current =  vec2int(vecHead)  + path[vec2int(vecHead)]
 
     shortPath(current,apple)
@@ -193,8 +227,28 @@ while gameOn:
         pygame.draw.rect(display, (255,0,255), [current.x*blockSize, current.y*blockSize, blockSize, blockSize])
         current = current + path[vec2int(current)]
     """
+=======
+    current = vec(vecHead)
 
+    while current != apple:
+        pygame.draw.rect(display, (255,0,255), [current.x*blockSize+(blockSize/3), current.y*blockSize+(blockSize/3), blockSize/4, blockSize/4])
+        try : current = current + path[vec2int(current)]
+        except : gameOn = False 
+>>>>>>> Stashed changes
 
+    pygame.draw.rect(display, (0,255,0), [vecHead[0]*blockSize, vecHead[1]*blockSize, blockSize, blockSize])
+
+<<<<<<< Updated upstream
+=======
+    snake(snakeList)
+
+    for bodypart in snakeList[:-1]:
+        if posX == bodypart[0] and posY == bodypart[1]:
+            pygame.draw.rect(display, (0,255,255), [posX, posY, blockSize, blockSize])
+            print ('self-intersect')
+
+    g.walls = []
+>>>>>>> Stashed changes
 
     #print snakehead
     clock.tick(10)
