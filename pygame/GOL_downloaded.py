@@ -6,7 +6,7 @@ pygame.init()
 WINDOW_WIDTH = 640
 WINDOW_HEIGHT = 480
 
-PIXEL_SIZE = 5
+PIXEL_SIZE = 4
 
 #Update ever UPDATETIME ms
 UPDATETIME = 1
@@ -112,15 +112,21 @@ def main():
             background.fill((0, 0, 0))
             for x in xrange(0,WINDOW_WIDTH/PIXEL_SIZE):
                 for y in xrange(0, WINDOW_HEIGHT/PIXEL_SIZE):
+                    if grid.getCell(x,y):
+                        if grid.countNeighbours(x,y) < 2:
+                            newgrid.setCell(x,y,False)
+                        elif grid.countNeighbours(x,y) <= 3:
+                            newgrid.setCell(x,y,True)
+                            number_active_cells += 1
+                            drawSquare(background,x,y)
+                        elif grid.countNeighbours(x,y) >= 4:
+                            newgrid.setCell(x,y,False)
 
-                    if grid.countNeighbours(x,y) < 2:
-                        newgrid.setCell(x,y,False)
-                    elif grid.countNeighbours(x,y) <= 3:
-                        newgrid.setCell(x,y,True)
-                        number_active_cells += 1
-                        drawSquare(background,x,y)
-                    elif grid.countNeighbours(x,y) >= 4:
-                        newgrid.setCell(x,y,False)
+                    else:
+                        if grid.countNeighbours(x,y) == 3:
+                            newgrid.setCell(x,y,True)
+                            number_active_cells += 1
+                            drawSquare(background,x,y)
 
             lastrun = pygame.time.get_ticks()
         else:

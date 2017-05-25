@@ -6,15 +6,15 @@ pygame.init()
 
 height = 600
 width = 600
-rows = 100
-cols = 100
+rows = 120
+cols = 120
 
 bh = height//rows
 bw = width//cols
 
 display = pygame.display.set_mode([width,height])
-name = pygame.display.set_caption('Game of Life')
 clock = pygame.time.Clock()
+name = pygame.display.set_caption('Game of Life {}'.format(clock.get_fps()))
 
 vec = pygame.math.Vector2
 
@@ -27,15 +27,18 @@ class grid():
                             vec(0,1),    vec(0,-1),
                             vec(1,1),    vec(1,-1),
                             vec(-1,-1),  vec(-1,1)]
+        self.newState = []
     # create cells
     def vectors(self):
         self.cells = [[cell(i, j) for j in range(self.rows)] for i in range(self.cols)]
     #set intial state
     def randomState(self):
-        return [[j.setState(bool(random.randint(0,6))) for j in i]  for i in self.cells]
+        return [[j.setState(True) for j in i if random.randint(1,5) ==  1]  for i in self.cells]
     #draw cells
     def show(self):
         return [[j.draw() for j in i if j.getState() == True] for i in self.cells]
+
+    # too many for loop debug with one and get rid of inbounds def TRY/EXCEPT
 
     def inbounds(self,node):
         return 0 <= node.x < self.cols and 0 <= node.y < self.rows
@@ -47,17 +50,24 @@ class grid():
     def eval(self):
         for i in self.cells:
             for j in i:
-                vecNeighbors = [k for k in self.neighbors(j.pos()) if self.cells[int(k.x)][int(k.y)].getState() == True]
+                vecNeighbors = [(int(k.x),int(k.y)) for k in self.neighbors(j.pos())]
+                vecState = [self.cells[x][y].getState() for x,y in vecNeighbors]
+                trueOnes = sum(vecState)
+                #print "cell {} has {} neighbors {} {} {}".format(j.pos(),len(vecNeighbors),vecNeighbors,vecState,trueOnes)
+
                 if j.getState() == True:
-                    if len(vecNeighbors) < 2:
-                        j.setState(False)
-                    elif len(vecNeighbors) <= 3:
-                        j.setState(True)
-                    elif len(vecNeighbors) >= 4:
-                        j.setState(False)
+                    if trueOnes < 2:
+                        j.setNext(False)
+                    elif trueOnes <= 3:
+                        j.setNext(True)
+                    elif trueOnes >= 4:
+                        j.setNext(False)
                 else:
-                    if len(vecNeighbors) == 3:
-                        j.setState(True)
+                    if trueOnes == 3:
+                        j.setNext(True)
+
+    def swapState(self):
+        return [[j.swap() for j in i]  for i in self.cells]
 
 
     def run(self):
@@ -69,6 +79,7 @@ class cell():
         self.posX   = posX
         self.posY   = posY
         self.state  = False
+        self.NextState = False
     def setState(self,newstate):
         self.state = newstate
         return self.state
@@ -78,14 +89,15 @@ class cell():
         return vec(self.posX , self.posY)
     def draw(self):
         return pygame.draw.ellipse(display,(255,255,255),Rect(self.posX*bw,self.posY*bh,bw,bh))
-
+    def setNext(self,next):
+        self.NextState = next
+    def swap(self):
+        self.state = self.NextState
 
 gameOn = True
 
 G = grid(rows, cols)
 G.run()
-print
-
 
 
 while gameOn:
@@ -96,13 +108,10 @@ while gameOn:
 
     display.fill((51,51,51))
 
-    G.eval()
     G.show()
+    G.eval()
+    G.swapState()
 
-
-
-
-
-    clock.tick(100)
+    #clock.tick(100)
 
     pygame.display.update()
