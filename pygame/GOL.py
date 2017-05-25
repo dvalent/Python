@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+import random
 
 pygame.init()
 
@@ -27,11 +28,15 @@ class grid():
                             vec(0,1),    vec(0,-1),
                             vec(1,1),    vec(1,-1),
                             vec(-1,-1),  vec(-1,1)]
-
+    def randomState(self):
+        return [[j.setstate(random.randint(0,1)) for j in i]  for i in self.vectors()]
     def vectors(self):
         return [[cell(i, j) for j in range(self.rows)] for i in range(self.cols)]
     def show(self):
-        return [[j.draw() for j in i]  for i in self.vectors()]
+        for i in self.vectors():
+            for j in i:
+                print j.state()
+        # return [[j.draw() for j in i if j.state() == True]  for i in self.vectors()]
     def inbounds(self,node):
         return 0 <= node.x < self.cols and 0 <= node.y < self.rows
     def neighbors(self,node):
@@ -42,9 +47,16 @@ class cell():
     def __init__(self,posX,posY):
         self.posX = posX
         self.posY = posY
-        self.state = False
+        self.state = 0
+
     def setstate(self,newstate):
         self.state = newstate
+        return self.state
+
+    def state(self):
+        # a = self.state
+        return self.state
+
     def pos(self):
         return vec(self.posX , self.posY)
     def draw(self):
@@ -54,6 +66,7 @@ gameOn = True
 
 G = grid(rows, cols)
 #print G.vectors()
+print G.randomState()
 
 while gameOn:
 
