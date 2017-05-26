@@ -39,7 +39,6 @@ class grid():
         return [[j.draw() for j in i if j.getState() == True] for i in self.cells]
 
     # too many for loop debug with one and get rid of inbounds def TRY/EXCEPT
-
     def inbounds(self,node):
         return 0 <= node.x < self.cols and 0 <= node.y < self.rows
 
@@ -50,11 +49,20 @@ class grid():
     def eval(self):
         for i in self.cells:
             for j in i:
+                count = 0
+                try:
+                    n = [self.cells[int((j.pos() + i).x)][int((j.pos() + i).y)].getState() for i in self.collection] #vector position not cell class
+                    trueOnes = sum(n)
+                    #print trueOnes
+                except:
+                    pass
+                    #print 'Error out bounds'
+                """
                 vecNeighbors = [(int(k.x),int(k.y)) for k in self.neighbors(j.pos())]
                 vecState = [self.cells[x][y].getState() for x,y in vecNeighbors]
                 trueOnes = sum(vecState)
                 #print "cell {} has {} neighbors {} {} {}".format(j.pos(),len(vecNeighbors),vecNeighbors,vecState,trueOnes)
-
+                """
                 if j.getState() == True:
                     if trueOnes < 2:
                         j.setNext(False)
