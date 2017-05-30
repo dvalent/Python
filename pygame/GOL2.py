@@ -6,8 +6,8 @@ pygame.init()
 
 height = 600
 width = 600
-rows = 25
-cols = 25
+rows = 75
+cols = 75
 
 bh = height//rows
 bw = width//cols
@@ -23,28 +23,31 @@ class grid():
         self.rows = rows
         self.cols = cols
         self.cells = []
+        self.pos = []
         self.collection = [ vec(1,0),    vec(-1,0),
                             vec(0,1),    vec(0,-1),
                             vec(1,1),    vec(1,-1),
                             vec(-1,-1),  vec(-1,1)]
         self.newState = []
     # create cells
-    def vectors(self):
-        self.cells = [[cell(i, j) for j in range(self.rows)] for i in range(self.cols)]
-    #set intial state
-    def randomState(self):
-        return [[j.setState(True) for j in i if random.randint(1,5) ==  1]  for i in self.cells]
-    #draw cells
+    def board(self):
+        self.cells = [[bool(random.randint(0,1)) for j in range(self.rows)] for i in range(self.cols)]
+        self.pos = [[vec(i,j) for j in range(self.rows)] for i in range(self.cols)]
+        print 'board created'
+        print self.cells
+
     def show(self):
-        return [[j.draw() for j in i if j.getState() == True] for i in self.cells]
+        return [[self.draw(i,j) for j in range(self.rows) if self.cells[i][j] == True] for i in range(self.cols)]
 
-    # too many for loop debug with one and get rid of inbounds def TRY/EXCEPT
-    def inbounds(self,node):
-        return 0 <= node.x < self.cols and 0 <= node.y < self.rows
+    def draw(self,x,y):
+        return pygame.draw.ellipse(display,(255,255,255),Rect(x*bw,y*bh,bw,bh))
 
-    def neighbors(self,node):
-        n = [node + i for i in self.collection]
-        return filter(self.inbounds , n)
+    def processCell(self, cell):
+        count = 0
+        for i in self.collection:
+            if cell + i:
+                count += 1
+        return count
 
     def eval(self):
         for i in self.cells:
@@ -57,12 +60,7 @@ class grid():
                 except:
                     pass
                     #print 'Error out bounds'
-                """
-                vecNeighbors = [(int(k.x),int(k.y)) for k in self.neighbors(j.pos())]
-                vecState = [self.cells[x][y].getState() for x,y in vecNeighbors]
-                trueOnes = sum(vecState)
-                #print "cell {} has {} neighbors {} {} {}".format(j.pos(),len(vecNeighbors),vecNeighbors,vecState,trueOnes)
-                """
+
                 if j.getState() == True:
                     if trueOnes < 2:
                         j.setNext(False)
@@ -79,34 +77,14 @@ class grid():
 
 
     def run(self):
-        self.vectors()
-        self.randomState()
+        self.board()
+        self.show()
 
-class cell():
-    def __init__(self,posX,posY):
-        self.posX   = posX
-        self.posY   = posY
-        self.state  = False
-        self.NextState = False
-    def setState(self,newstate):
-        self.state = newstate
-        return self.state
-    def getState(self):
-        return self.state
-    def pos(self):
-        return vec(self.posX , self.posY)
-    def draw(self):
-        return pygame.draw.ellipse(display,(255,255,255),Rect(self.posX*bw,self.posY*bh,bw,bh))
-    def setNext(self,next):
-        self.NextState = next
-    def swap(self):
-        self.state = self.NextState
 
 gameOn = True
 
 G = grid(rows, cols)
-G.run()
-
+G.board()
 
 while gameOn:
 
@@ -117,9 +95,5 @@ while gameOn:
     display.fill((51,51,51))
 
     G.show()
-    G.eval()
-    G.swapState()
-
-
 
     pygame.display.update()

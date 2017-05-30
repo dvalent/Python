@@ -6,7 +6,7 @@ pygame.init()
 WINDOW_WIDTH = 640
 WINDOW_HEIGHT = 480
 
-PIXEL_SIZE = 4
+PIXEL_SIZE = 10
 
 #Update ever UPDATETIME ms
 UPDATETIME = 1

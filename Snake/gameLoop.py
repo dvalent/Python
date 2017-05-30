@@ -15,13 +15,17 @@ lPink = (255, 170, 170)
 green = (0,155,0)
 
 displayWidth = 800
-displayHeight = 600
+displayHeight = 800
 
 clock = pygame.time.Clock()
 
-blockSize = 10
+blockSize = 80
 
+<<<<<<< Updated upstream
 FPS = 10
+=======
+FPS = 5
+>>>>>>> Stashed changes
 
 font = pygame.font.SysFont(None, 25)
 
